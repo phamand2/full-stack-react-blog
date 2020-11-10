@@ -14,6 +14,7 @@ function Posts() {
   const [content, setContent] = useState('')
 
 
+
   useEffect(()=>{
     getData()
   },[])
@@ -21,6 +22,12 @@ function Posts() {
   const getData = async () => {
     const data = await axios.get('/api/v1/posts');
     setPosts(data.data)
+  }
+
+  const deletePost = (postId) => {
+    axios.delete(`/api/v1/posts/${postId}`)
+    const removePost = posts.filter(post => post.id !== postId)
+    setPosts(removePost)
   }
   
 
@@ -62,6 +69,7 @@ function Posts() {
             <p>{ post.content.slice(0, 200)}{ post.content.length > 200 && "..."}</p>
             <Link to={`/posts/${post.id}`}>Read More</Link>
           </Segment>
+          <button onClick={()=>deletePost(post.id)}>Remove Post</button>
           </div>
       })}   
           <Modal
@@ -78,6 +86,7 @@ function Posts() {
                 <Form.Input required label='Publish Date' type='datetime-local' value={publish} onChange={(e)=>{setPublish(e.target.value)}} />
                 <Form.TextArea required label='Content' value={content} onChange={(e) => { setContent(e.target.value) }}/>
               </Form>
+
             </Modal.Content>
             <Modal.Actions>
               <Button onClick={() => setOpen(false)}>Cancel</Button>

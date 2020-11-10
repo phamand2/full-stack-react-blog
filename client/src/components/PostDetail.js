@@ -18,6 +18,7 @@ function PostDetail() {
     setPost(data.data)
   }
 
+
   // Check if there is a post
   if(!post){
     return (
@@ -40,7 +41,7 @@ function PostDetail() {
       </Header>
         { post.content.split('\n').map((paragraph,i) => {return <p key={i}>{paragraph}</p>} )}
         <Comments />
-        <Link to='/'>Back</Link>         
+        <Link to='/posts'>Back</Link>         
     </Segment>
     
     </>
