@@ -9,6 +9,7 @@ router.get('/', function(req, res) {
   .then(posts => res.json(posts))
 });
 
+
 // Get 1 Post by ID
 // GET /api/v1/posts/102
 router.get('/:id', (req,res)=> {
@@ -104,6 +105,57 @@ router.delete('/:id', (req,res)=>{
     }
   })
 })
+
+
+
+// example URL:
+// GET /api/v1/posts/102/comments
+router.get('/:postId/comments', (req,res)=>{
+  db.Comment.findAll({
+    where: {
+      PostId: req.params.postId
+    }
+  })
+  .then(comments => {
+    res.json(comments)
+  })
+})
+
+
+
+// example URL:
+// POST /api/v1/posts/102/comments
+router.post('/:postId/comments', (req,res)=>{
+  if (!req.body || !req.body.author || !req.body.content){
+    res.status(400).json({
+      error: 'Please include all required fields'
+    })
+    return;
+  }
+
+  db.Post.findByPk(req.params.postId)
+  .then(post =>{
+    if (!post){
+      res.status(404).json({
+        error: "Can't create comment for post that doesn't exist"
+      })
+    }  
+    return post.createComment({
+    author: req.body.author,
+    content: req.body.content,
+    approved: true
+    })
+  })
+  .then(comment => {
+    res.json({
+      success: 'Comment added',
+      comment: comment
+    })
+  })
+})
+
+
+
 
 
 module.exports = router;
